@@ -9,6 +9,7 @@ import React, {
   useRef,
 } from "react";
 import { Story } from "../_types/Story";
+import { fetchTopStories, fetchItems } from "../_services/firebase";
 
 interface StoriesContextProps {
   stories: Story[];
@@ -33,12 +34,8 @@ export const StoriesProvider = ({ children }: { children: ReactNode }) => {
   const fetchStories = async (pageNumber: number) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty&orderBy="$priority"&limitToFirst=${
-          pageNumber * limitStoriesId
-        }`
-      );
-      const storiesId = await response.json();
+      const limit = pageNumber * limitStoriesId;
+      const storiesId = await fetchTopStories(limit);
       if (
         JSON.stringify(storiesId) ===
         JSON.stringify(previousStoriesIdRef.current)
@@ -49,19 +46,13 @@ export const StoriesProvider = ({ children }: { children: ReactNode }) => {
 
       previousStoriesIdRef.current = storiesId;
 
-      const storyPromises = storiesId
-        .slice((pageNumber - 1) * limitStoriesId, pageNumber * limitStoriesId)
-        .map(async (id: number) => {
-          const storyDetail = await fetch(
-            `https://hacker-news.firebaseio.com/v0/item/${id}.json`
-          );
-          const story = await storyDetail.json();
-          return story;
-        });
-
-      const storiesData: Story[] = (await Promise.all(storyPromises)).filter(
-        (story) => story !== null
+      const storyIdsToFetch = storiesId.slice(
+        (pageNumber - 1) * limitStoriesId,
+        pageNumber * limitStoriesId
       );
+
+      const storiesData: Story[] = await fetchItems(storyIdsToFetch);
+
       setStories((prevStories) => [...prevStories, ...storiesData]);
     } catch (err) {
       setError("Failed to load stories");

@@ -1,4 +1,5 @@
 import { CommentType } from "@/app/_types/Comment";
+import { fetchItem } from "@/app/_services/firebase";
 
 export const fetchComments = async (
   ids: number[],
@@ -9,11 +10,11 @@ export const fetchComments = async (
     signal: AbortSignal
   ): Promise<CommentType[]> => {
     const commentPromises = ids.map(async (id) => {
-      const response = await fetch(
-        `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
-        { signal }
-      );
-      const comment = await response.json();
+      const comment = await fetchItem(id);
+
+      if (signal.aborted) {
+        throw new DOMException("AbortError", "AbortError");
+      }
 
       if (comment && comment.kids && comment.kids.length > 0) {
         comment.kids = await fetchCommentsRecursive(comment.kids, signal);
