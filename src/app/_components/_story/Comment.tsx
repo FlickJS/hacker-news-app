@@ -16,7 +16,7 @@ const Comment = ({ comment }: CommentProps) => {
   }
 
   return (
-    <li className="p-4 mb-4 bg-white shadow rounded-lg overflow-hidden comment">
+    <li className=" overflow-hidden comment">
       <p className="font-semibold text-gray-800 mb-2">
         Commented by: {comment.by} - {convertUnixToDate(comment.time)}
       </p>

@@ -25,3 +25,6 @@ li code {
   font-variation-settings: normal;
   font-size: 1em;
 }
+ul[data-testid="comments-list"] > li {
+  padding-bottom: 30px;
+}

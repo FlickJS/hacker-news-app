@@ -80,10 +80,7 @@ export const useStory = (kids: StoryParams["kids"]) => {
 
     if (kidsAsNumbers.length > 0) {
       loadInitialComments();
-    } else {
-      dispatch({ type: "FETCH_FAILURE", payload: "No comments available." });
     }
-
     return () => {
       controller.abort();
     };

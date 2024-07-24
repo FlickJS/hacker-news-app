@@ -48,7 +48,7 @@ const StoryPage = () => {
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Comments</h2>
           {loading && !error && (
-            <ul>
+            <ul className="p-4 bg-white shadow rounded-lg">
               {[...Array(5)].map((_, i) => (
                 <li key={i} className="w-full">
                   <Placeholder uniqueKey={`placeholder-${i}`} />
@@ -62,11 +62,16 @@ const StoryPage = () => {
               <p className="text-gray-700 text-lg">No comments available.</p>
             </div>
           )}
-          <ul data-testid="comments-list">
-            {comments.slice(0, visibleCount).map((comment) => (
-              <Comment key={comment.id} comment={comment} />
-            ))}
-          </ul>
+          {!loading && comments.length > 0 && (
+            <ul
+              data-testid="comments-list"
+              className="p-4 bg-white shadow rounded-lg"
+            >
+              {comments.slice(0, visibleCount).map((comment) => (
+                <Comment key={comment.id} comment={comment} />
+              ))}
+            </ul>
+          )}
           {comments.length > 0 && (
             <div className="flex justify-center mt-4">
               <Button onClick={handleLoadMoreComments} disabled={allLoaded}>
