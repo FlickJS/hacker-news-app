@@ -25,21 +25,26 @@ const StoryPage = () => {
     handleLoadMoreComments,
   } = useStory(storyKids);
 
-  if (!story) {
-    return <div>Story not found</div>;
-  }
   return (
     <div>
       <Navigation />
-      <div className="container mx-auto p-4">
-        <h2 className="text-xl font-bold mb-4">Hacker news {story.id}</h2>
-        <StoryDetails
-          title={story.title}
-          text={story.text}
-          by={story.by}
-          score={story.score}
-          url={story.url}
-        />
+      <div className="container mx-auto p-4" style={{ minHeight: "100vh" }}>
+        <h2 className="text-xl font-bold mb-4">
+          Hacker news {story ? story.id : ""}
+        </h2>
+        {story ? (
+          <StoryDetails
+            title={story.title}
+            text={story.text}
+            by={story.by}
+            score={story.score}
+            url={story.url}
+          />
+        ) : (
+          <div className="p-4 mb-4 bg-white shadow rounded-lg">
+            <Placeholder uniqueKey="story-placeholder" />
+          </div>
+        )}
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Comments</h2>
           {loading && !error && (
