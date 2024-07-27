@@ -1,23 +1,15 @@
 import { CommentType } from "@/app/_types/Comment";
 import { fetchItem } from "@/app/_services/firebase";
 
-export const fetchComments = async (
-  ids: number[],
-  signal: AbortSignal
-): Promise<CommentType[]> => {
+export const fetchComments = async (ids: number[]): Promise<CommentType[]> => {
   const fetchCommentsRecursive = async (
-    ids: number[],
-    signal: AbortSignal
+    ids: number[]
   ): Promise<CommentType[]> => {
     const commentPromises = ids.map(async (id) => {
       const comment = await fetchItem(id);
 
-      if (signal.aborted) {
-        throw new DOMException("AbortError", "AbortError");
-      }
-
       if (comment && comment.kids && comment.kids.length > 0) {
-        comment.kids = await fetchCommentsRecursive(comment.kids, signal);
+        comment.kids = await fetchCommentsRecursive(comment.kids);
       }
 
       return comment;
@@ -27,5 +19,5 @@ export const fetchComments = async (
     return comments.filter((comment) => comment !== null && comment.text);
   };
 
-  return fetchCommentsRecursive(ids, signal);
+  return fetchCommentsRecursive(ids);
 };

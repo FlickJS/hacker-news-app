@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useRef } from "react";
+import { useEffect, useMemo, useReducer } from "react";
 import { CommentType } from "@/app/_types/Comment";
 import { StoryParams } from "@/app/_types/StoryParams";
 import { fetchComments } from "./actions";
@@ -49,46 +49,31 @@ function storyReducer(state: State, action: Action): State {
 
 export const useStory = (kids: StoryParams["kids"]) => {
   const [state, dispatch] = useReducer(storyReducer, initialState);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   const kidsAsNumbers = useMemo(() => {
     return Array.isArray(kids) ? (kids as unknown as string[]).map(Number) : [];
   }, [kids]);
 
   useEffect(() => {
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    const { signal } = controller;
-
     const loadInitialComments = async () => {
       dispatch({ type: "FETCH_INIT" });
       try {
-        const initialComments = await fetchComments(
-          kidsAsNumbers.slice(0, 5),
-          signal
-        );
+        const initialComments = await fetchComments(kidsAsNumbers.slice(0, 5));
         dispatch({ type: "FETCH_SUCCESS", payload: initialComments });
       } catch (err) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          dispatch({
-            type: "FETCH_FAILURE",
-            payload: "Failed to load comments",
-          });
-        }
+        dispatch({
+          type: "FETCH_FAILURE",
+          payload: "Failed to load comments",
+        });
       }
     };
 
     if (kidsAsNumbers.length > 0) {
       loadInitialComments();
     }
-    return () => {
-      controller.abort();
-    };
   }, [kidsAsNumbers]);
 
   const handleLoadMoreComments = async () => {
-    const controller = abortControllerRef.current || new AbortController();
-    const { signal } = controller;
     const nextVisibleCount = state.visibleCount + 5;
 
     if (nextVisibleCount >= kidsAsNumbers.length) {
@@ -97,17 +82,14 @@ export const useStory = (kids: StoryParams["kids"]) => {
 
     try {
       const additionalComments = await fetchComments(
-        kidsAsNumbers.slice(state.visibleCount, nextVisibleCount),
-        signal
+        kidsAsNumbers.slice(state.visibleCount, nextVisibleCount)
       );
       dispatch({ type: "LOAD_MORE", payload: additionalComments });
     } catch (err) {
-      if (err instanceof Error && err.name !== "AbortError") {
-        dispatch({
-          type: "FETCH_FAILURE",
-          payload: "Failed to load more comments",
-        });
-      }
+      dispatch({
+        type: "FETCH_FAILURE",
+        payload: "Failed to load more comments",
+      });
     }
   };
 
