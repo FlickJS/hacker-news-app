@@ -1,5 +1,16 @@
 import { CommentType } from "@/app/_types/Comment";
+import { Story } from "@/app/_types/Story";
 import { fetchItem } from "@/app/_services/firebase";
+
+export const fetchStoryById = async (id: number): Promise<Story | null> => {
+  try {
+    const story = await fetchItem(id);
+    return story;
+  } catch (err) {
+    console.error("Failed to fetch story by id:", err);
+    return null;
+  }
+};
 
 export const fetchComments = async (ids: number[]): Promise<CommentType[]> => {
   const fetchCommentsRecursive = async (

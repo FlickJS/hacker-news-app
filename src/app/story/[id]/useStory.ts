@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { CommentType } from "@/app/_types/Comment";
-import { StoryParams } from "@/app/_types/StoryParams";
-import { fetchComments } from "./actions";
+import { Story } from "@/app/_types/Story";
+import { fetchComments, fetchStoryById } from "./actions";
+import { useStoriesContext } from "../../_context/StoriesContext";
 
 interface State {
+  story: Story | null;
   comments: CommentType[];
   loading: boolean;
+  commentsLoading: boolean;
   error: string | null;
   visibleCount: number;
   allLoaded: boolean;
@@ -13,14 +16,18 @@ interface State {
 
 type Action =
   | { type: "FETCH_INIT" }
-  | { type: "FETCH_SUCCESS"; payload: CommentType[] }
+  | { type: "FETCH_STORY_SUCCESS"; payload: Story }
+  | { type: "FETCH_COMMENTS_INIT" }
+  | { type: "FETCH_COMMENTS_SUCCESS"; payload: CommentType[] }
   | { type: "FETCH_FAILURE"; payload: string }
   | { type: "LOAD_MORE"; payload: CommentType[] }
   | { type: "SET_ALL_LOADED" };
 
 const initialState: State = {
+  story: null,
   comments: [],
   loading: true,
+  commentsLoading: true,
   error: null,
   visibleCount: 5,
   allLoaded: false,
@@ -30,10 +37,19 @@ function storyReducer(state: State, action: Action): State {
   switch (action.type) {
     case "FETCH_INIT":
       return { ...state, loading: true, error: null };
-    case "FETCH_SUCCESS":
-      return { ...state, loading: false, comments: action.payload };
+    case "FETCH_STORY_SUCCESS":
+      return { ...state, story: action.payload, loading: false };
+    case "FETCH_COMMENTS_INIT":
+      return { ...state, commentsLoading: true, error: null };
+    case "FETCH_COMMENTS_SUCCESS":
+      return { ...state, comments: action.payload, commentsLoading: false };
     case "FETCH_FAILURE":
-      return { ...state, loading: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        commentsLoading: false,
+        error: action.payload,
+      };
     case "LOAD_MORE":
       return {
         ...state,
@@ -47,42 +63,53 @@ function storyReducer(state: State, action: Action): State {
   }
 }
 
-export const useStory = (kids: StoryParams["kids"]) => {
+export const useStory = (id: number) => {
   const [state, dispatch] = useReducer(storyReducer, initialState);
-
-  const kidsAsNumbers = useMemo(() => {
-    return Array.isArray(kids) ? (kids as unknown as string[]).map(Number) : [];
-  }, [kids]);
+  const { stories } = useStoriesContext();
 
   useEffect(() => {
-    const loadInitialComments = async () => {
+    const loadStoryAndComments = async () => {
       dispatch({ type: "FETCH_INIT" });
       try {
-        const initialComments = await fetchComments(kidsAsNumbers.slice(0, 5));
-        dispatch({ type: "FETCH_SUCCESS", payload: initialComments });
+        let story = stories.find((s) => s.id === id) || null;
+        if (!story) {
+          story = await fetchStoryById(id);
+        }
+        if (story) {
+          dispatch({ type: "FETCH_STORY_SUCCESS", payload: story });
+          dispatch({ type: "FETCH_COMMENTS_INIT" });
+          const initialComments = await fetchComments(
+            (story.kids ?? []).slice(0, 5)
+          );
+          dispatch({
+            type: "FETCH_COMMENTS_SUCCESS",
+            payload: initialComments,
+          });
+        } else {
+          throw new Error("Story not found");
+        }
       } catch (err) {
         dispatch({
           type: "FETCH_FAILURE",
-          payload: "Failed to load comments",
+          payload: `The story with ID: ${id} could not be found. Please check the ID and try again.`,
         });
       }
     };
 
-    if (kidsAsNumbers.length > 0) {
-      loadInitialComments();
-    }
-  }, [kidsAsNumbers]);
+    loadStoryAndComments();
+  }, [id, stories]);
 
   const handleLoadMoreComments = async () => {
     const nextVisibleCount = state.visibleCount + 5;
+    const kids = state.story?.kids ?? [];
 
-    if (nextVisibleCount >= kidsAsNumbers.length) {
+    if (nextVisibleCount >= kids.length) {
       dispatch({ type: "SET_ALL_LOADED" });
     }
 
     try {
       const additionalComments = await fetchComments(
-        kidsAsNumbers.slice(state.visibleCount, nextVisibleCount)
+        kids.slice(state.visibleCount, nextVisibleCount)
       );
       dispatch({ type: "LOAD_MORE", payload: additionalComments });
     } catch (err) {
