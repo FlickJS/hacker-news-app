@@ -26,7 +26,7 @@ const StoryPage = () => {
   return (
     <div>
       <Navigation />
-      <div className="container mx-auto p-4" style={{ minHeight: "100vh" }}>
+      <div className="container mx-auto p-4">
         <h2 className="text-xl font-bold mb-4">
           Hacker news {story ? story.id : ""}
         </h2>

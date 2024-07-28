@@ -23,16 +23,20 @@ describe("API tests", () => {
       `https://hacker-news.firebaseio.com/v0/item/${firstStoryId}.json`
     );
     const data = await response.json();
+
     expect(data).toMatchObject({
       by: expect.any(String),
       descendants: expect.any(Number),
       id: firstStoryId,
-      kids: expect.any(Array),
       score: expect.any(Number),
       time: expect.any(Number),
       title: expect.any(String),
       type: "story",
       url: expect.any(String),
     });
+
+    if (data.kids) {
+      expect(data.kids).toEqual(expect.any(Array));
+    }
   });
 });
