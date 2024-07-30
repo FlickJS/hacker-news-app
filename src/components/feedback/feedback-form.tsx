@@ -1,5 +1,5 @@
-import Button from "../_layout/Button";
-import { FeedbackFormProps } from "../../_types/FeedbackFormProps";
+import Button from "../layout/button";
+import { FeedbackFormProps } from "../../types/FeedbackFormProps";
 
 const FeedbackForm: React.FC<FeedbackFormProps> = ({
   form,

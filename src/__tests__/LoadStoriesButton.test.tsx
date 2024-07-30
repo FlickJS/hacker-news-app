@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Home from "../page";
-import { StoriesProvider } from "../_context/StoriesContext";
+import Home from "../app/page";
+import { StoriesProvider } from "../context/StoriesContext";
 import { describe, expect } from "vitest";
 
 describe("Home page", () => {

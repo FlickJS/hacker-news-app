@@ -1,5 +1,5 @@
 import React from "react";
-import { sanitizeHtml } from "@/app/_utils/sanitizeHtml";
+import { sanitizeHtml } from "../../utils/sanitizeHtml";
 
 interface StoryDetailsProps {
   title: string;

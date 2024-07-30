@@ -1,8 +1,8 @@
 import { useEffect, useReducer } from "react";
-import { CommentType } from "@/app/_types/Comment";
-import { Story } from "@/app/_types/Story";
+import { CommentType } from "@/types/Comment";
+import { Story } from "@/types/Story";
 import { fetchComments, fetchStoryById } from "./actions";
-import { useStoriesContext } from "../../_context/StoriesContext";
+import { useStoriesContext } from "../../../context/StoriesContext";
 
 interface State {
   story: Story | null;

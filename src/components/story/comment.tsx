@@ -1,6 +1,6 @@
-import { convertUnixToDate } from "../../_utils/dateUtils";
-import { sanitizeHtml } from "../../_utils/sanitizeHtml";
-import { CommentType } from "../../_types/Comment";
+import { convertUnixToDate } from "../../utils/dateUtils";
+import { sanitizeHtml } from "../../utils/sanitizeHtml";
+import { CommentType } from "../../types/Comment";
 
 interface CommentProps {
   comment: CommentType;

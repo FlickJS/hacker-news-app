@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { submitFeedback } from "./actions";
-import { FormState, ErrorState } from "../_types/FormTypes";
+import { FormState, ErrorState } from "../../types/FormTypes";
 
 const useFeedback = () => {
   const [form, setForm] = useState<FormState>({

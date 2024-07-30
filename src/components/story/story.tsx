@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { convertUnixToDate } from "../../_utils/dateUtils";
-import { Story as StoryType } from "../../_types/Story";
+import { convertUnixToDate } from "../../utils/dateUtils";
+import { Story as StoryType } from "../../types/Story";
 
 interface StoryProps {
   story: StoryType;

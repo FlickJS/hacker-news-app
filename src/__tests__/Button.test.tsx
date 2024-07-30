@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import Button from "../_components/_layout/Button";
+import Button from "../components/layout/button";
 
 describe("Button component", () => {
   test("renders the button with correct text", () => {

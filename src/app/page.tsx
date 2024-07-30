@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Placeholder from "./_components/_layout/Placeholder";
-import Hero from "./_components/_layout/Hero";
-import Button from "./_components/_layout/Button";
-import { useStoriesContext } from "./_context/StoriesContext";
-import Story from "./_components/_story/Story";
+import Placeholder from "../components/layout/placeholder";
+import Hero from "../components/layout/hero";
+import Button from "../components/layout/button";
+import { useStoriesContext } from "../context/StoriesContext";
+import Story from "../components/story/story";
 
 const Home = () => {
   const { stories, loading, error, loadMoreStories } = useStoriesContext();

@@ -1,11 +1,11 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import Navigation from "../../_components/_layout/Navigation";
-import Button from "../../_components/_layout/Button";
-import Placeholder from "../../_components/_layout/Placeholder";
-import StoryDetails from "../../_components/_story/StoryDetails";
-import Comment from "../../_components/_story/Comment";
+import Navigation from "../../../components/layout/navigation";
+import Button from "../../../components/layout/button";
+import Placeholder from "../../../components/layout/placeholder";
+import StoryDetails from "../../../components/story/story-details";
+import Comment from "../../../components/story/comment";
 import { useStory } from "./useStory";
 
 const StoryPage = () => {

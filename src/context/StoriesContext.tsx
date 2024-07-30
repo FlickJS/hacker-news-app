@@ -8,8 +8,8 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { Story } from "../_types/Story";
-import { fetchTopStories, fetchItems } from "../_services/firebase";
+import { Story } from "../types/Story";
+import { fetchTopStories, fetchItems } from "../services/firebase";
 
 interface StoriesContextProps {
   stories: Story[];

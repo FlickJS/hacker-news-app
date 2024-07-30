@@ -1,6 +1,6 @@
-import { CommentType } from "@/app/_types/Comment";
-import { Story } from "@/app/_types/Story";
-import { fetchItem } from "@/app/_services/firebase";
+import { CommentType } from "@/types/Comment";
+import { Story } from "@/types/Story";
+import { fetchItem } from "../../../services/firebase";
 
 export const fetchStoryById = async (id: number): Promise<Story | null> => {
   try {
